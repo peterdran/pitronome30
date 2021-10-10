@@ -7,18 +7,22 @@ public:
 	{
 		m_timing = true;
 		beat_samples = 0;
+		temp_start_time = high_resolution_clock::now();
 		
 	}
 
 	void stop_timing()
 	{
 		m_timing = false;
-		
+		temp_stop_time = high_resolution_clock::now();
 	}
 
 	void tap()
 	{
-		//somehow keep track of time per press?
+		temp_stop_time = high_resolution_clock::now();
+		m_beats[beat_samples] = duration_cast<milliseconds>(stop - start);
+		beat_samples++;
+		temp_start_time = high_resolution_clock::now();
 	}
 
 	size_t get_bpm() const
@@ -26,9 +30,10 @@ public:
 		size_t bpm = 0;
 		for(int i = 0; !m_timing && i < beat_samples; i++)
 		{
-			//how's it timed?
+			bpm += m_beats[i];
 		}
 		return (bpm / beat_samples);
 	}
 
 };
+

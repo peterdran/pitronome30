@@ -23,7 +23,7 @@ volatile bool btn_mode_pressed = false;
 volatile bool btn_tap_pressed = false;
 volatile bool mode = false;//mode: false is play, true is learn
 
-metronome *m;
+//metronome *m;
 
 volatile size_t bpm = 60; //default 1s
 volatile size_t min_bpm = 0;
@@ -60,12 +60,13 @@ void get42(web::http::http_request msg)
 
 void bpm_base_get(web::http::http_request msg)
 {
-	msg.reply(200, web::json::value::number(m.get_bpm()));
+	msg.reply(200, web::json::value::number(bpm));
 }
 
 void bpm_base_put(web::http::http_request msg)
 {
-	
+	auto json = msg.extract_json();
+	bpm = json.as_integer(); //TODO handle exception
 	msg.reply(200);
 }
 
@@ -155,7 +156,7 @@ int main()
 	wiringPiISR(BTN_MODE, INT_EDGE_RISING, mode_button_ISR);
 	wiringPiISR(BTN_TAP, INT_EDGE_RISING, tap_button_ISR);
 
-	m = new metronome();
+	metronome* m = new metronome();
 
 	// ** This loop manages reading button state. **
 	while (true) 
@@ -179,6 +180,8 @@ int main()
 			{
 				m.stop_timing();
 				btn_mode_pressed = false;
+				bpm = m.get_bpm();
+				
 			}
 			else if(btn_tap_pressed)
 			{
@@ -204,7 +207,10 @@ int main()
 		}
 		
 		
+		min_bpm = (min_bpm > bpm) ? bpm : min_bpm;
+		max_bpm = (max_bpm < bpm) ? bpm : max_bpm;
 	}
 
 	return 0;
 }
+
