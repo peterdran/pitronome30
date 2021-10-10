@@ -66,7 +66,7 @@ void bpm_base_get(web::http::http_request msg)
 void bpm_base_put(web::http::http_request msg)
 {
 	auto json = msg.extract_json();
-	bpm = json.as_integer(); //TODO handle exception
+	//bpm = json.as_integer(); //TODO handle exception
 	msg.reply(200);
 }
 
@@ -100,7 +100,7 @@ void mode_button_ISR()
 	btn_mode_pressed = true;
 }
 
-void tab_button_ISR()
+void tap_button_ISR()
 {
 	btn_tap_pressed = true;
 }
@@ -156,7 +156,7 @@ int main()
 	wiringPiISR(BTN_MODE, INT_EDGE_RISING, mode_button_ISR);
 	wiringPiISR(BTN_TAP, INT_EDGE_RISING, tap_button_ISR);
 
-	metronome* m = new metronome();
+	metronome m;// = new metronome();
 
 	// ** This loop manages reading button state. **
 	while (true) 

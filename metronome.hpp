@@ -1,18 +1,21 @@
 #pragma once
 
 #include <cstddef>
+#include <chrono>
+
+
+
+using namespace std::chrono;
 
 class metronome
 {
 public:
 	enum { beat_samples = 3 };
 
-public:
 	metronome()
 	: m_timing(false), m_beat_count(0) {}
 	~metronome() {}
 
-public:
 	// Call when entering "learn" mode
 	void start_timing();
 	// Call when leaving "learn" mode
@@ -31,7 +34,11 @@ private:
 	bool m_timing;
 
 	// Insert new samples at the end of the array, removing the oldest
-	size_t m_beats[beat_samples];
+	size_t m_beats[beat_samples]; //entry in ms
 	size_t m_beat_count;
+//	high_resolution_clock
+	high_resolution_clock::time_point temp_start_time;
+	high_resolution_clock::time_point temp_stop_time;
+	
 };
 

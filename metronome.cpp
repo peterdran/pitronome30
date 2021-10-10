@@ -1,39 +1,37 @@
+#include "metronome.hpp"
+#include <chrono>
 
+using namespace std::chrono;
 
-class metronome
+void metronome::start_timing()
 {
-public:
-	void start_timing()
-	{
-		m_timing = true;
-		beat_samples = 0;
-		temp_start_time = high_resolution_clock::now();
-		
-	}
+	this->m_timing = true;
+	this->beat_samples = 0;
+	this->temp_start_time = high_resolution_clock::now();
+	
+}
 
-	void stop_timing()
-	{
-		m_timing = false;
-		temp_stop_time = high_resolution_clock::now();
-	}
+void metronome::stop_timing()
+{
+	this->m_timing = false;
+	this->temp_stop_time = high_resolution_clock::now();
+}
 
-	void tap()
-	{
-		temp_stop_time = high_resolution_clock::now();
-		m_beats[beat_samples] = duration_cast<milliseconds>(stop - start);
-		beat_samples++;
-		temp_start_time = high_resolution_clock::now();
-	}
+void metronome::tap()
+{
+	this->temp_stop_time = high_resolution_clock::now();
+	this->m_beats[beat_samples] = duration_cast<milliseconds>(this->temp_stop_time - this->temp_start_time);
+	this->beat_samples++;
+	this->temp_start_time = high_resolution_clock::now();
+}
 
-	size_t get_bpm() const
+size_t metronome::get_bpm() const
+{
+	size_t bpm = 0;
+	for(int i = 0; !this->m_timing && i < this->beat_samples; i++)
 	{
-		size_t bpm = 0;
-		for(int i = 0; !m_timing && i < beat_samples; i++)
-		{
-			bpm += m_beats[i];
-		}
-		return (bpm / beat_samples);
+		bpm += m_beats[i];
 	}
-
-};
+	return (bpm / this->beat_samples); //note: integer division
+}
 
